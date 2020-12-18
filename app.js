@@ -1,12 +1,12 @@
 const budget = {
     month: document.querySelector('.budget__title--month'),
-    netBudget: 0,
     netBudgetBox: document.querySelector('.budget__value'),
     totalIncomeBox: document.querySelector('.budget__income--value'),
-    totalIncome: 0,
     totalExpensesBox: document.querySelector('.budget__expenses--value'),
-    totalExpenses: 0,
     totalExpensesPercentageBox: document.querySelector('.budget__expenses--percentage'),
+    netBudget: 0,
+    totalIncome: 0,
+    totalExpenses: 0,
     totalExpensesPercentage: 0,
 }
 
@@ -67,16 +67,13 @@ function addList() {
     } else if (type.value === "exp") {
         let newPctg = document.createElement('div');
         let compute = Math.round(inputValue.value/parseFloat(budget.totalIncome)*100)
-        // console.log(compute);
         newPctg.classList.add('item__percentage');
         right.appendChild(newPctg);
         newPctg.innerText = `${compute} %`
-        // console.log(newPctg);
         var list = document.querySelector(".expenses__list");
         newValue.innerText = inputValue.value;
         budget.totalExpenses = parseFloat(budget.totalExpenses) + parseFloat(inputValue.value);
         budget.totalExpensesBox.innerText = formatter.format(budget.totalExpenses);
-        // console.log(budget.totalExpenses, budget.totalExpensesBox)
     }
 // create delete div
     const trashDiv = document.createElement('div');
@@ -133,10 +130,8 @@ function computeTotals(){
 function updatePercent(){
     let percentList = document.querySelectorAll('.item__percentage');
     for (i = 0; i < percentList.length; i++) {
-        var element = percentList[i];
-        console.log(element)
+        let element = percentList[i];
         let sibling = element.previousElementSibling.innerText;
-        console.log(sibling)
         let compute = Math.round(sibling/parseFloat(budget.totalIncome)*100)
         element.innerText = `${compute} %`;
     }
