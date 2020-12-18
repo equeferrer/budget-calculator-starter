@@ -25,7 +25,24 @@ const addBtn = document.querySelector(".add__btn");
 const type = document.querySelector(".add__type");
 const container = document.querySelector('.container');
 
+function changeColor(){
+    if (type.value === "inc"){
+        console.log("inc");
+        type.classList.remove('red-focus')
+        addBtn.classList.remove('red');
+        inputDescription.classList.remove('red-focus');
+        inputValue.classList.remove('red-focus')
+    } else if (type.value === "exp"){
+        console.log("exp");
+        type.classList.add('red-focus');
+        addBtn.classList.add('red');
+        inputDescription.classList.add('red-focus');
+        inputValue.classList.add('red-focus')
+    }
+}
+
 // EVENT LISTENERS 
+type.addEventListener("change", changeColor);
 container.addEventListener('click', deleteItem);
 addBtn.addEventListener('click', () => {
     if (inputValue.value > 0 && inputDescription.value !== ""){
