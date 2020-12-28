@@ -1,3 +1,7 @@
+// REMAINING BUGS 
+// 1. NaN if 0 and 0
+// 2. Infinity %
+
 const budget = {
     month: document.querySelector('.budget__title--month'),
     netBudgetBox: document.querySelector('.budget__value'),
@@ -27,13 +31,11 @@ const container = document.querySelector('.container');
 
 function changeColor(){
     if (type.value === "inc"){
-        console.log("inc");
         type.classList.remove('red-focus')
         addBtn.classList.remove('red');
         inputDescription.classList.remove('red-focus');
         inputValue.classList.remove('red-focus')
     } else if (type.value === "exp"){
-        console.log("exp");
         type.classList.add('red-focus');
         addBtn.classList.add('red');
         inputDescription.classList.add('red-focus');
@@ -43,7 +45,12 @@ function changeColor(){
 
 // EVENT LISTENERS 
 type.addEventListener("change", changeColor);
-container.addEventListener('click', deleteItem);
+container.addEventListener('click', (elem)=> {
+    deleteItem(elem);
+    computePercentage();
+    computeTotals();
+    updatePercent();
+});
 addBtn.addEventListener('click', () => {
     if (inputValue.value > 0 && inputDescription.value !== ""){
         addList();
@@ -57,7 +64,14 @@ addBtn.addEventListener('click', () => {
 })
 
 function addList() {   
-// ITEM DIV
+    createItem();
+    computePercentage();
+    computeTotals();
+    updatePercent();
+}
+
+function createItem(){
+    // ITEM DIV
 	const itemDiv = document.createElement('div');
     itemDiv.classList.add('item');
     itemDiv.classList.add('clearfix');
@@ -78,17 +92,17 @@ function addList() {
 // Expense List vs Income List
     if (type.value === "inc"){
         var list = document.querySelector(".income__list");
-        newValue.innerText = inputValue.value;
+        newValue.innerText = formatter.format(inputValue.value);
         budget.totalIncome = parseFloat(budget.totalIncome) + parseFloat(inputValue.value);
         budget.totalIncomeBox.innerText = formatter.format(budget.totalIncome);
     } else if (type.value === "exp") {
         let newPctg = document.createElement('div');
-        let compute = Math.round(inputValue.value/parseFloat(budget.totalIncome)*100)
+        let compute = Math.round(inputValue.value/parseFloat(budget.totalIncome)*100);
         newPctg.classList.add('item__percentage');
         right.appendChild(newPctg);
         newPctg.innerText = `${compute} %`
         var list = document.querySelector(".expenses__list");
-        newValue.innerText = inputValue.value;
+        newValue.innerText = formatter.format(inputValue.value);
         budget.totalExpenses = parseFloat(budget.totalExpenses) + parseFloat(inputValue.value);
         budget.totalExpensesBox.innerText = formatter.format(budget.totalExpenses);
     }
@@ -106,9 +120,6 @@ function addList() {
 //Clear Input Value
     inputDescription.value="";
     inputValue.value="";
-    computePercentage();
-    computeTotals();
-    updatePercent();
 }
 
 function deleteItem(e){
@@ -117,26 +128,30 @@ function deleteItem(e){
         const closeDiv = i__class.parentElement.parentElement;
         const item = closeDiv.parentElement.parentElement;
         const itemDiv = item.parentElement;
+        
         if (itemDiv.classList[0] === "income__list"){
-            let sibling = closeDiv.previousElementSibling;
-            budget.totalIncome = parseFloat(budget.totalIncome) - parseFloat(sibling.innerHTML);
+            let sibling = closeDiv.previousElementSibling.innerText;
+            let numSibling = parseFloat(sibling.replace(/,/g, "").slice(1))
+            budget.totalIncome = parseFloat(budget.totalIncome) - parseFloat(numSibling);
             budget.totalIncomeBox.innerText = formatter.format(budget.totalIncome);
         } else if (itemDiv.classList[0] === "expenses__list"){
-            let sibling = closeDiv.previousElementSibling.previousElementSibling;
-            budget.totalExpenses = parseFloat(budget.totalExpenses) - parseFloat(sibling.innerHTML);
+            let sibling = closeDiv.previousElementSibling.previousElementSibling.innerText;
+            let numSibling = parseFloat(sibling.replace(/,/g, "").slice(1))
+            budget.totalExpenses = parseFloat(budget.totalExpenses) - parseFloat(numSibling);
             budget.totalExpensesBox.innerText = formatter.format(budget.totalExpenses);
         }
         item.remove();        
-        computePercentage();
-        computeTotals();
-        updatePercent();
 	}
 }
 
 function computePercentage(){
     budget.totalExpensesPercentage = parseFloat(budget.totalExpenses/budget.totalIncome);
     let percent = Math.round(budget.totalExpensesPercentage * 100);
-    budget.totalExpensesPercentageBox.innerText = `${percent} %`;    
+    if (!isNaN(percent) && isFinite(percent)){
+        budget.totalExpensesPercentageBox.innerText = `${percent} %`;    
+    } else {
+        return budget.totalExpensesPercentageBox.innerText = "..."
+    }
 }
 
 function computeTotals(){
@@ -149,8 +164,13 @@ function updatePercent(){
     for (i = 0; i < percentList.length; i++) {
         let element = percentList[i];
         let sibling = element.previousElementSibling.innerText;
-        let compute = Math.round(sibling/parseFloat(budget.totalIncome)*100)
-        element.innerText = `${compute} %`;
+        let numSibling = parseFloat(sibling.replace(/,/g, "").slice(1))
+        let compute = Math.round(numSibling/parseFloat(budget.totalIncome)*100);
+        if (!isNaN(compute) && isFinite(compute)){
+            element.innerText = `${compute} %`;   
+        } else {
+            element.innerText = "..."
+        }
     }
 }
 

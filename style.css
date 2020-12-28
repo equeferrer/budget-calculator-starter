@@ -277,9 +277,9 @@ h2 {
 .unpaid:hover .item__description { font-weight: 900; }
 
 .income .item__value::before{
-    content: "+ ₱"
+    content: "+ "
 }
 
 .expenses .item__value::before{
-    content: "- ₱"
+    content: "- "
 }
