@@ -1,7 +1,3 @@
-// REMAINING BUGS 
-// 1. NaN if 0 and 0
-// 2. Infinity %
-
 const budget = {
     month: document.querySelector('.budget__title--month'),
     netBudgetBox: document.querySelector('.budget__value'),
