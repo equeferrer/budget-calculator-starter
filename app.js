@@ -17,11 +17,17 @@ const budget = {
 let currentDate = new Date();
 budget.month.innerText = `${currentDate.toLocaleString('default', { month: 'long' })} ${currentDate.getFullYear()}`;
 
+// Helper function
+const formatter = new Intl.NumberFormat('fil-PH', {
+    style: 'currency',
+    currency: 'PHP',
+});
+
 // set all values to 0
-budget.netBudgetBox.innerText = 0;
-budget.totalIncomeBox.innerText = 0;
-budget.totalExpensesBox.innerText = 0;
-budget.totalExpensesPercentageBox.innerText = 0;
+budget.netBudgetBox.innerText = formatter.format(0);
+budget.totalIncomeBox.innerText = formatter.format(0);
+budget.totalExpensesBox.innerText = formatter.format(0);
+budget.totalExpensesPercentageBox.innerText = "...";
 
 const inputDescription = document.querySelector(".add__description");
 const inputValue = document.querySelector(".add__value");
@@ -174,8 +180,3 @@ function updatePercent(){
     }
 }
 
-// Helper function
-const formatter = new Intl.NumberFormat('fil-PH', {
-    style: 'currency',
-    currency: 'PHP',
-});
